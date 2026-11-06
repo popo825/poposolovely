@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Albert (Chun-Po) Chang — Data Driven AI Meteorologist. Research in weather, tropical cyclones and machine learning.">
+  <meta name="theme-color" content="#f8f7f3">
+  <title>Albert Chang · AI & Atmospheric Science</title>
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="content.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="masthead">
+    <a href="#home" class="brand"><img src="assets/mark.svg" width="28" height="28" alt=""> ALBERT CHANG<span class="brand-note"> / PERSONAL FIELD NOTES</span></a>
+    <nav aria-label="Main navigation">
+      <a href="#home" data-i="home">Home</a><a href="#works" data-i="works">Work & Awards</a><a href="#hobby" data-i="hobby">Beyond Research</a><a href="#photos" data-i="photos">Photos</a><a href="#cv">CV <span aria-hidden="true">↗</span></a>
+    </nav>
+    <button class="language" id="language" aria-label="Switch to Chinese">中文</button>
+  </header>
+  <div class="layout">
+    <aside class="profile" aria-label="Profile">
+      <div class="portrait"><div class="portrait-fallback" aria-hidden="true"><span>AC</span><svg viewBox="0 0 240 240"><g fill="none" stroke="currentColor"><ellipse cx="120" cy="120" rx="110" ry="46" transform="rotate(-35 120 120)"/><ellipse cx="120" cy="120" rx="94" ry="64" transform="rotate(-35 120 120)"/><circle cx="120" cy="120" r="86"/><circle cx="120" cy="120" r="109"/></g></svg></div><img src="assets/profile.jpg" alt="Albert Chang" hidden id="profile-image"></div>
+      <h2>Albert Chang</h2><p class="chinese-name">Chun-Po Chang · 張鈞博</p>
+      <p class="profile-role">Data Driven AI<br>Meteorologist</p>
+      <div class="profile-rule"></div>
+      <p class="affiliation" data-i="affiliation">Research Assistant<br>National Central University</p>
+      <p class="location"><span aria-hidden="true">⌖</span> <span data-i="taiwan">Taiwan</span></p>
+      <ul class="socials"><li><a href="mailto:albert930825@gmail.com"><span aria-hidden="true">↗</span> Email</a></li><li><a href="https://www.linkedin.com/in/chunpochang/" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> LinkedIn</a></li><li><a href="https://www.youtube.com/@popolovelypopo" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span> YouTube</a></li><li><a href="assets/cv.pdf" target="_blank" rel="noopener"><span aria-hidden="true">↓</span> <span data-i="downloadCV">Curriculum Vitae</span></a></li></ul>
+      <div class="side-note"><span class="status-dot"></span><span data-i="focus">Exploring weather through data.</span></div>
+    </aside>
+    <main id="main" tabindex="-1">
+      <section id="home" class="page">
+        <div class="hero"><div class="eyebrow" data-i="eyebrow">COMPUTER SCIENCE × ATMOSPHERIC SCIENCE</div><h1>Albert Chang<span class="hero-name">張鈞博</span></h1><p class="hero-role">Data Driven AI Meteorologist</p><p class="hero-intro" data-i="intro">From a lifelong curiosity about typhoons to learning from atmospheric data.</p><div class="hero-topics"><span>Tropical cyclones</span><span>Machine learning</span><span>Nowcasting</span></div><svg class="contours" viewBox="0 0 440 340" aria-hidden="true"><g fill="none" stroke="currentColor"><ellipse cx="290" cy="160" rx="205" ry="108" transform="rotate(-38 290 160)"/><ellipse cx="290" cy="160" rx="174" ry="88" transform="rotate(-38 290 160)"/><ellipse cx="290" cy="160" rx="142" ry="69" transform="rotate(-38 290 160)"/><ellipse cx="290" cy="160" rx="110" ry="52" transform="rotate(-38 290 160)"/><ellipse cx="290" cy="160" rx="78" ry="36" transform="rotate(-38 290 160)"/><ellipse cx="290" cy="160" rx="43" ry="23" transform="rotate(-38 290 160)"/></g><circle cx="290" cy="160" r="4" fill="currentColor"/></svg></div>
+        <section class="about section-block"><div class="section-heading"><h2 data-i="about">About me</h2><span class="section-index">01 / INTRODUCTION</span></div><div id="about-copy" class="prose"></div><a class="text-link" href="#works" data-i="explore">Explore my work ↗</a></section>
+        <section class="section-block journey"><div class="section-heading"><h2>Timeline</h2><span class="section-index">02 / THE JOURNEY</span></div><p class="section-description" data-i="timelineHint">A path from computer science to atmospheric research. Select a milestone to explore the work.</p><div id="timeline" class="timeline"></div><div class="journey-note"><span aria-hidden="true">↗</span><span data-i="exchange">Along the way: exchange studies at the Technical University of Denmark, Jan–Jun 2026.</span></div></section>
+        <section class="current-work"><div><span class="eyebrow" data-i="currentFocus">CURRENT RESEARCH</span><h2 data-i="currentTitle">Learning the rhythms<br>of afternoon rain.</h2><p data-i="currentDesc">Data-driven convective nowcasting in the Taipei Basin, using GNSS and surface observations.</p><a class="text-link" href="#works/nowcasting" data-i="viewResearch">View research ↗</a></div><div class="rain-graphic" aria-hidden="true"><span>TAIPEI BASIN</span><div class="rain-cloud">☁</div><div class="rain-lines"></div><small>GNSS + SURFACE OBSERVATIONS</small></div></section>
+      </section>
+      <section id="works" class="page" hidden><div class="page-heading"><span class="eyebrow">RESEARCH / PROJECTS / RECOGNITION</span><h1 data-i="works">Work & Awards</h1><p data-i="workIntro">Weather, code, and the projects in between. A collection of research, engineering and recognition, newest first.</p></div><div class="work-tools"><label class="search-wrap"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Search projects, methods, keywords…" aria-label="Search projects"></label><div id="filters" class="filters" aria-label="Filter projects"></div><div class="results-line"><span id="result-count" role="status" aria-live="polite"></span><button id="clear-filters" class="quiet" data-i="reset">Reset filters ↺</button></div></div><div id="work-list"></div><p id="no-results" hidden data-i="empty">No projects match. Try another keyword or reset the filters.</p></section>
+      <section id="hobby" class="page" hidden><div class="page-heading"><span class="eyebrow">LIFE OUTSIDE THE LAB</span><h1 data-i="hobby">Beyond Research</h1><p data-i="hobbyIntro">A few things I care about when I step away from the code.</p></div><div id="hobby-grid" class="hobby-grid"></div><div class="section-heading future-heading"><h2 data-i="moreSoon">More to come</h2><span class="section-index">ROOM TO GROW</span></div><div id="reserved-hobbies" class="reserved-grid"></div></section>
+      <section id="photos" class="page" hidden><div class="page-heading"><span class="eyebrow">A VISUAL NOTEBOOK</span><h1 data-i="photos">Photos</h1><p data-i="photoIntro">Research, milestones, and life in between.</p></div><div id="photo-grid" class="photo-grid"></div></section>
+      <section id="cv" class="page" hidden><div class="page-heading"><span class="eyebrow">BACKGROUND / EXPERIENCE</span><h1>Curriculum Vitae</h1><p data-i="cvIntro">Education, research experience, skills and awards.</p><a class="button" href="assets/cv.pdf" target="_blank" rel="noopener" data-i="openCV">Open CV PDF ↗</a> <a class="text-link" href="assets/cv.pdf" download="Albert-Chang-CV.pdf" data-i="download">Download ↓</a></div><div class="education" id="education"></div><object class="cv-viewer" data="assets/cv.pdf" type="application/pdf"><p><a href="assets/cv.pdf" data-i="openCV">Open CV PDF ↗</a></p></object></section>
+      <footer><span>© 2026 Albert Chang</span><a href="mailto:albert930825@gmail.com" data-i="getInTouch">Get in touch ↗</a><span>Weather. Data. Curiosity.</span></footer>
+    </main>
+  </div>
+  <noscript><p>This website needs JavaScript for navigation and filters. <a href="assets/cv.pdf">Read the CV here.</a></p></noscript>
+</body></html>
