@@ -78,7 +78,7 @@ function route(move = true) {
     window.scrollTo({top:0,behavior:'instant'});
     $('#main').focus({preventScroll:true});
   }
-  document.title = `Albert Chang · ${id === 'home' ? 'Data Driven AI Meteorologist' : id === 'cv' ? 'Curriculum Vitae' : tr(id)}`;
+  document.title = `Albert Chang · ${id === 'home' ? 'Weather, Data & Curiosity' : id === 'cv' ? 'Curriculum Vitae' : tr(id)}`;
 }
 
 $('#search').addEventListener('input', e => { query = e.target.value; renderWorks(); });
