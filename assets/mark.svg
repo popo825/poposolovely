@@ -1,1 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" rx="20" fill="#174e53"/><g fill="none" stroke="#f8f7f3" stroke-width="1.3"><ellipse cx="20" cy="20" rx="15" ry="8" transform="rotate(-40 20 20)"/><ellipse cx="20" cy="20" rx="10" ry="5" transform="rotate(-40 20 20)"/></g><circle cx="20" cy="20" r="2" fill="#f8f7f3"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-labelledby="title">
+  <title id="title">Albert Chang — tropical cyclone</title>
+  <circle cx="40" cy="40" r="40" fill="#174e53"/>
+  <path fill="#f8f7f3" fill-rule="evenodd" d="M67 24C57 8 35 8 23 19C11 30 12 46 24 55C21 59 13 57 9 54C19 70 42 71 55 58C67 46 66 30 54 23C58 19 63 21 67 24ZM49 40A9 9 0 1 1 31 40A9 9 0 1 1 49 40Z"/>
+</svg>
