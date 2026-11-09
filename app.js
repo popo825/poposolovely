@@ -10,7 +10,7 @@ const sortedProjects = [...PROJECTS].sort((a,b) => b.date.localeCompare(a.date))
 function activateOptionalImage(img) {
   img.onload = () => { img.hidden = false; };
   img.onerror = () => { img.hidden = true; };
-  if (img.complete && img.naturalWidth > 0) img.hidden = false;
+  if (img.complete) img.hidden = img.naturalWidth === 0;
 }
 
 function renderFilters() {
@@ -53,9 +53,9 @@ function render() {
   $('#search').setAttribute('aria-label', tr('search'));
   $('#about-copy').innerHTML = tr('aboutParagraphs').map(p => `<p>${p}</p>`).join('');
   $('#timeline').innerHTML = MILESTONES.map(m => `<a class="milestone" href="#works/${m.target}"><small>${m.date}</small><strong>${pick(m.title)}</strong><p>${pick(m.desc)}</p><span class="milestone-arrow" aria-hidden="true">↗</span></a>`).join('');
-  $('#hobby-grid').innerHTML = HOBBIES.map(h => `<article class="hobby-card"><div class="hobby-art"><svg viewBox="0 0 120 100" aria-hidden="true">${h.art}</svg><img hidden src="${esc(h.image || `assets/photos/${h.id}.jpg`)}" alt="${esc(pick(h.title))}" loading="lazy"></div><div class="hobby-text"><span class="eyebrow">${h.date}</span><h2>${pick(h.title)}</h2><p>${pick(h.text)}</p>${h.url ? `<a class="text-link" href="${h.url}" target="_blank" rel="noopener noreferrer">${pick(h.link)}</a>` : ''}</div></article>`).join('');
+  $('#hobby-grid').innerHTML = HOBBIES.map(h => `<article class="hobby-card"><div class="hobby-art"><svg viewBox="0 0 120 100" aria-hidden="true">${h.art}</svg><img src="${esc(h.image || `assets/photos/${h.id}.jpg`)}" alt="${esc(pick(h.title))}" loading="lazy"></div><div class="hobby-text"><span class="eyebrow">${h.date}</span><h2>${pick(h.title)}</h2><p>${pick(h.text)}</p>${h.url ? `<a class="text-link" href="${h.url}" target="_blank" rel="noopener noreferrer">${pick(h.link)}</a>` : ''}</div></article>`).join('');
   $('#reserved-hobbies').innerHTML = [4,5].map(n => `<article class="reserved-card"><span>0${n} / +</span><h3>${tr('reserved')}</h3><p>${tr('reservedDesc')}</p></article>`).join('');
-  $('#photo-grid').innerHTML = PHOTOS.map(p => `<figure><div class="photo-slot"><span>${p.number}</span><small>${tr('photosSoon')}</small><img hidden src="${esc(p.src)}" alt="${esc(pick(p.title))}" loading="lazy"></div><figcaption>${pick(p.title)}</figcaption></figure>`).join('');
+  $('#photo-grid').innerHTML = PHOTOS.map(p => `<figure><div class="photo-slot"><span>${p.number}</span><small>${tr('photosSoon')}</small><img src="${esc(p.src)}" alt="${esc(pick(p.title))}" loading="lazy"></div><figcaption>${pick(p.title)}</figcaption></figure>`).join('');
   $('#education').innerHTML = lang === 'en' ? '<article><small>2022 — 2026</small><h2>National Yang Ming Chiao Tung University</h2><p>B.S. in Computer Science · GPA 3.95 / 4.30</p></article><article><small>JAN — JUN 2026</small><h2>Technical University of Denmark</h2><p>Exchange student · Grade average 10.0 / 12.0</p></article>' : '<article><small>2022 — 2026</small><h2>國立陽明交通大學</h2><p>資訊工程學士 · GPA 3.95 / 4.30</p></article><article><small>2026 年 1–6 月</small><h2>丹麥科技大學</h2><p>交換學生 · 平均成績 10.0 / 12.0</p></article>';
   document.querySelectorAll('.hobby-art img,.photo-slot img').forEach(activateOptionalImage);
   renderFilters(); renderWorks(); route(false);
