@@ -10,7 +10,7 @@
   }
   const fieldLayer = svg('g', {class: 'weather-field'});
   const labelLayer = svg('g', {class: 'weather-labels'});
-  const levels = Array.from({length: 22}, (_, i) => 948 + 4 * i);
+  const levels = Array.from({length: 25}, (_, i) => 936 + 4 * i);
   const lines = levels.map(level => {
     const path = svg('path', {class: 'weather-isobar'});
     const label = svg('text', {class: 'pressure-label'});
@@ -33,37 +33,66 @@
   chart.append(fieldLayer, labelLayer, highMarker.group, lowMarker.group);
 
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  const sceneDuration = 34;
-  const period = 2 * sceneDuration;
   const width = 520, height = 380, step = 5;
   const cols = width / step + 1, rows = height / step + 1;
   const grid = new Float64Array(cols * rows);
   const clamp = x => Math.max(0, Math.min(1, x));
   const smooth = x => { const k = clamp(x); return k * k * (3 - 2 * k); };
   const progress = (t, from, to) => smooth((t - from) / (to - from));
+  const range = (min, max) => min + (max - min) * Math.random();
+  const tracks = [
+    {name: 'west', end: [-175, 266], control: [[399, 321], [88, 285]], duration: [17, 23], pressure: [947, 981], retreat: 20, peak: .48},
+    {name: 'northwest', end: [-139, -158], control: [[435, 353], [175, 152]], duration: [23, 30], pressure: [942, 979], retreat: 110, peak: .52},
+    {name: 'north', end: [184, -189], control: [[266, 380], [184, 244]], duration: [30, 37], pressure: [938, 970], retreat: 421, peak: .56},
+    {name: 'northeast', end: [670, -190], control: [[64, 355], [48, 163]], duration: [27, 34], pressure: [942, 977], retreat: 442, peak: .50},
+  ];
+  let trackQueue = [];
+  let lastTrack;
+
+  function nextStorm() {
+    if (!trackQueue.length) {
+      trackQueue = [...tracks];
+      for (let i = trackQueue.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [trackQueue[i], trackQueue[j]] = [trackQueue[j], trackQueue[i]];
+      }
+      if (trackQueue[0] === lastTrack) [trackQueue[0], trackQueue[1]] = [trackQueue[1], trackQueue[0]];
+    }
+    const track = trackQueue.shift();
+    lastTrack = track;
+    return {
+      ...track,
+      duration: range(...track.duration),
+      minimum: Math.round(range(...track.pressure)),
+      size: range(.84, 1.15),
+      offsetX: range(-23, 23),
+      offsetY: range(-24, 24),
+      bend: range(-26, 26),
+      turning: track.name === 'north' || track.name === 'northeast',
+    };
+  }
+
+  let storm = nextStorm();
   let time = 0;
   let previous = null;
   let frame = null;
   let onscreen = true;
 
-  // The high, cyclone and trough all contribute to one scalar pressure field.
-  function buildField(t, tropical) {
-    const phase = 2 * Math.PI * t / sceneDuration;
-    const departure = progress(t, 5, 24);
-    const returnWest = progress(t, 20, 34);
-    const incoming = progress(t, 1, 17);
-    const crossing = progress(t, 10, 27);
-    const leaving = progress(t, 19, 34);
-    const active = progress(t, 0, 6) * (1 - progress(t, 24, 34));
-    const strength = 14 + 28 * progress(t, 5, 21);
-    const hx = 255 + (tropical ? 470 * (progress(t, 3, 16) - progress(t, 19, 34)) : 535 * departure);
-    const hx2 = -300 + 555 * returnWest;
+  // The ridge and each storm contribute to the same pressure field.
+  function buildField(elapsed, storm) {
+    const t = clamp(elapsed / storm.duration);
+    const phase = 2 * Math.PI * t;
+    // Slow through the turn without coming to a stop, then pick up speed.
+    const travel = storm.turning ? t + .53 * Math.sin(phase) / (2 * Math.PI) : t;
+    const remaining = 1 - travel;
+    const weights = [remaining ** 3, 3 * remaining ** 2 * travel, 3 * remaining * travel ** 2, travel ** 3];
+    const points = [[646, 434], ...storm.control, storm.end];
+    const lx = points.reduce((value, point, i) => value + point[0] * weights[i], storm.offsetX);
+    const ly = points.reduce((value, point, i) => value + point[1] * weights[i], storm.offsetY + storm.bend * Math.sin(Math.PI * travel));
+    const active = progress(t, 0, .17) * (1 - progress(t, .83, 1));
+    const retreat = progress(t, .08, .55) - progress(t, .63, 1);
+    const hx = 255 + storm.retreat * retreat;
     const hy = 190 + 13 * Math.sin(phase);
-    const approach = progress(t, 1, 16);
-    const north = progress(t, 16, 31);
-    const lx = tropical ? 667 - 470 * approach : -205 + 438 * incoming + 114 * crossing + 421 * leaving;
-    const ly = tropical ? 509 - 319 * approach - 367 * north : 278 - 90 * incoming - 37 * crossing - 52 * leaving;
-    const tilt = -.58 + .55 * progress(t, 4, 22) + .17 * Math.sin(phase * 2);
     const hTilt = -.26 + .33 * Math.sin(phase);
     const lobes = [];
     const add = (amp, x, y, rx, ry, angle) => {
@@ -71,13 +100,12 @@
       const a = 1 / (rx * rx), b = 1 / (ry * ry);
       lobes.push({amp,x,y,xx:a*c*c+b*s*s,xy:2*c*s*(a-b),yy:a*s*s+b*c*c});
     };
-    // Both scenes start and end on the same high-pressure field.
-    const eastHigh = tropical ? 1 : 1 - progress(t, 15, 30);
-    const westHigh = tropical ? 0 : progress(t, 20, 33);
-    add(24 * eastHigh, hx, hy, 176, 118, hTilt);
-    add(24 * westHigh, hx2, hy, 176, 118, hTilt);
-    add(3.4 * eastHigh, hx - 85, hy + 45, 125, 180, hTilt);
-    add(3.4 * westHigh, hx2 - 85, hy + 45, 125, 180, hTilt);
+    // A broad ridge and two offset shoulders give the high unequal gradients.
+    // Their motion vanishes at the loop boundary, along with the cyclone.
+    const ridgeSpread = 23 * retreat + 12 * Math.sin(phase);
+    add(21, hx, hy, 171 + ridgeSpread, 103, hTilt);
+    add(5.4, hx - 92 - 22 * retreat, hy + 42, 137, 165, hTilt - .29);
+    add(3.6, hx + 66, hy - 69, 93, 112, hTilt + .41);
 
     const at = (x, y) => {
       let value = 1009 + (x - 260) * .009 + (270 - y) * .010
@@ -88,19 +116,12 @@
       }
       return value;
     };
-    if (tropical) {
-      const corePressure = 1005 - 60 * progress(t, 2, 16) + 42 * progress(t, 16, 31);
-      const anomaly = (corePressure - at(lx, ly)) * active;
-      // Compact, nearly circular core with a wider, shallow outer circulation.
-      add(anomaly * .78, lx, ly, 65, 63, phase);
-      add(anomaly * .22, lx, ly, 132, 121, tilt);
-    } else {
-      add(-strength * active, lx, ly, 98 + 12*Math.sin(phase), 75, tilt);
-      add(-9 * active, lx - 74, ly + 84, 155, 34, -.87 + .23*Math.sin(phase));
-      add(-5.4 * active, lx + 104, ly + 21, 135, 45, tilt + .2);
-      add(5.8 * active, lx + 76, ly + 148, 180, 63, -.21);
-    }
-    return {at, highs: tropical ? [[hx, hy]] : [[hx, hy], [hx2, hy]], low: [lx, ly], active};
+    const corePressure = 1005 - (1005 - storm.minimum) * progress(t, .09, storm.peak)
+      + (991 - storm.minimum) * progress(t, storm.peak, .90);
+    const anomaly = (corePressure - at(lx, ly)) * active;
+    add(anomaly * .78, lx, ly, 65 * storm.size, 63 * storm.size, phase);
+    add(anomaly * .22, lx, ly, 132 * storm.size, 121 * storm.size, hTilt);
+    return {at, high: [hx, hy], low: [lx, ly], active};
   }
 
   function extrema(at, [x, y], sign) {
@@ -126,8 +147,7 @@
   }
 
   function render(elapsed) {
-    const cycle = elapsed % period;
-    const {at, highs, low, active} = buildField(cycle % sceneDuration, cycle >= sceneDuration);
+    const {at, high, low, active} = buildField(elapsed, storm);
     for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
       grid[y * cols + x] = at(x * step, y * step);
     }
@@ -162,8 +182,7 @@
         }
       }
     }
-    const high = highs.find(([x]) => x > 20 && x < width-20);
-    const highPoint = high ? extrema(at, high, 1) : null;
+    const highPoint = high[0] < width - 20 ? extrema(at, high, 1) : null;
     const lowPoint = extrema(at, low, -1);
     const occupied = [highPoint, lowPoint].filter(Boolean);
     for (let i = 0; i < lines.length; i++) {
@@ -186,6 +205,10 @@
   function tick(now) {
     if (previous !== null) time += Math.min(now - previous, 50) / 1000;
     previous = now;
+    if (time >= storm.duration) {
+      time -= storm.duration;
+      storm = nextStorm();
+    }
     render(time);
     frame = requestAnimationFrame(tick);
   }
