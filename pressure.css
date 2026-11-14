@@ -1,0 +1,26 @@
+.pressure-stage{position:relative;min-width:0;isolation:isolate}
+.pressure-stage .contours{position:relative;inset:auto;width:100%;opacity:1;color:#547b67;overflow:hidden}
+.pressure-stage .isobar-lines{stroke-width:1.3;opacity:1}
+.pressure-stage .pressure-label,.pressure-stage .pressure-center{fill:currentColor}
+.pressure-stage .pressure-label{stroke-width:5px}
+.weather-low{color:#416d85}
+.weather-isobar{stroke:#698c7c;stroke-width:1.15;stroke-linecap:round;fill:none;opacity:.83}
+.weather-center .pressure-center,.weather-center-value{paint-order:stroke fill;stroke:var(--paper);stroke-width:4px}
+.weather-center-value{font:13px var(--sans);fill:currentColor;text-anchor:middle}
+.pressure-code{font:11px ui-monospace,Consolas,monospace;fill:var(--teal);opacity:.09}
+.pressure-code-drift{animation:pressure-scroll 24s linear infinite;animation-play-state:paused}
+.contours[data-running=true] .pressure-code-drift{animation-play-state:running}
+@keyframes pressure-scroll{to{transform:translateY(-180px)}}
+.hero{grid-template-columns:minmax(0,.94fr) minmax(300px,1.12fr);gap:12px;min-height:380px}
+.hero h1{font-size:clamp(48px,4.6vw,72px)}
+@media(max-width:1200px) and (min-width:801px){
+  .hero .pressure-stage{width:100%;justify-self:end}
+  .hero{grid-template-columns:minmax(0,.96fr) minmax(230px,1fr)}
+  .hero-copy{max-width:none}
+}
+@media(max-width:800px){
+  .hero{padding-bottom:25px;min-height:0}
+  .hero h1{font-size:clamp(42px,10vw,52px)}
+  .pressure-stage{width:min(100%,505px);margin:15px auto 0}
+}
+@media(prefers-reduced-motion:reduce){.pressure-code-drift{animation:none}}
