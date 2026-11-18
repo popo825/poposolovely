@@ -31,7 +31,7 @@ function renderWorks() {
     const title = esc(pick(p.title));
     const tags = p.tags.map(tag => `<span class="tag">${esc(tag)}</span>`).join('');
     const recognition = p.recognition ? `<p class="award-label">${esc(pick(p.recognition))}</p>` : '';
-    const photo = p.image ? `<a class="work-image" href="${esc(p.image)}" target="_blank" rel="noopener noreferrer" aria-label="${tr('viewImage')}"><img src="${esc(p.image)}" alt="${title}" loading="lazy"></a>` : '';
+    const photo = p.image ? `<a class="work-image" href="${esc(p.imageLink || p.image)}" target="_blank" rel="noopener noreferrer" aria-label="${p.imageLink ? tr('projectLink') : tr('viewImage')}"><img src="${esc(p.image)}" alt="${title}" loading="lazy"></a>` : '';
     const link = p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener noreferrer" class="text-link">${tr('projectLink')}</a>` : '';
     return `${heading}
       <details class="work" id="project-${p.id}" data-id="${p.id}" ${openIds.has(p.id) ? 'open' : ''}>
