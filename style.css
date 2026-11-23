@@ -65,3 +65,10 @@
 .photo-grid .photo-slot{border-radius:6px}
 .photo-grid figcaption{padding:10px 0 0}
 @media(max-width:580px){.photo-grid{grid-template-columns:1fr;gap:18px}}
+
+/* Current research with a project figure beside the title. */
+.wind-research{align-items:center;gap:28px}
+.wind-research h2{font-size:clamp(25px,2.65vw,33px);line-height:1.25;overflow-wrap:break-word}
+.research-image{display:block;min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.research-image img{display:block;width:100%;height:auto;max-height:340px;object-fit:contain}
+@media(max-width:800px){.wind-research{gap:22px}.research-image{width:100%}}
