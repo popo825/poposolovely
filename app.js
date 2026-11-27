@@ -3,7 +3,12 @@ let lang = 'en';
 const tr = key => COPY[lang][key];
 const pick = value => value[lang === 'zh' ? 1 : 0];
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const sortedProjects = [...PROJECTS].sort((a,b) => b.date.localeCompare(a.date));
+const sortedProjects = [...PROJECTS].sort((a,b) => {
+  const yearOrder = b.date.slice(0,4).localeCompare(a.date.slice(0,4));
+  if (yearOrder) return yearOrder;
+  const featuredOrder = Number(b.id === 'ncdr') - Number(a.id === 'ncdr');
+  return featuredOrder || b.date.localeCompare(a.date);
+});
 const workObserver = new IntersectionObserver(entries => {
   for (const entry of entries) {
     if (!entry.isIntersecting) continue;
