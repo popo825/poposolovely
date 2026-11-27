@@ -18,7 +18,51 @@ function activateOptionalImage(img) {
   if (img.complete) img.hidden = img.naturalWidth === 0;
 }
 
+let disposeWorkCarousels = () => {};
+
+function workPhoto(p, title) {
+  if (!p.images) return p.image ? `<a class="work-image" href="${esc(p.imageLink || p.image)}" target="_blank" rel="noopener noreferrer" aria-label="${p.imageLink ? tr('projectLink') : tr('viewImage')}"><img src="${esc(p.image)}" alt="${title}" loading="lazy"></a>` : '';
+  const zh = lang === 'zh';
+  return `<div class="work-carousel" role="region" aria-roledescription="${zh ? '照片輪播' : 'carousel'}" aria-label="${title}">
+    <div class="work-carousel-track" tabindex="0" aria-label="${zh ? '使用左右方向鍵切換照片' : 'Use left and right arrow keys to switch photos'}">${p.images.map((photo, i) => `<a class="work-carousel-slide" href="${esc(photo.src)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(pick(photo.alt))} (${i + 1}/${p.images.length})"><img src="${esc(photo.src)}" alt="${esc(pick(photo.alt))}" loading="lazy"></a>`).join('')}</div>
+    <div class="work-carousel-controls"><button type="button" data-step="-1" aria-label="${zh ? '上一張照片' : 'Previous photo'}">←</button><span class="work-carousel-count">1 / ${p.images.length}</span><button type="button" data-step="1" aria-label="${zh ? '下一張照片' : 'Next photo'}">→</button></div>
+  </div>`;
+}
+
+function initWorkCarousels() {
+  const cleanups = [];
+  document.querySelectorAll('.work-carousel').forEach(carousel => {
+    const track = carousel.querySelector('.work-carousel-track');
+    const count = carousel.querySelector('.work-carousel-count');
+    const total = track.children.length;
+    let nextAt = Date.now() + 5000;
+    const index = () => Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+    const move = step => {
+      const next = (index() + step + total) % total;
+      track.scrollTo({left: next * track.clientWidth, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+      nextAt = Date.now() + 5000;
+    };
+    carousel.querySelectorAll('[data-step]').forEach(button => button.addEventListener('click', () => move(Number(button.dataset.step))));
+    track.addEventListener('scroll', () => { count.textContent = `${index() + 1} / ${total}`; }, {passive:true});
+    track.addEventListener('keydown', event => {
+      if (!['ArrowLeft','ArrowRight'].includes(event.key)) return;
+      event.preventDefault(); move(event.key === 'ArrowRight' ? 1 : -1);
+    });
+    track.addEventListener('pointerdown', () => { nextAt = Date.now() + 8000; });
+    const timer = setInterval(() => {
+      const bounds = carousel.getBoundingClientRect();
+      if (document.hidden || !carousel.closest('details').open || !carousel.getClientRects().length || bounds.bottom <= 0 || bounds.top >= innerHeight || carousel.matches(':hover') || carousel.contains(document.activeElement) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        nextAt = Date.now() + 5000; return;
+      }
+      if (Date.now() >= nextAt) move(1);
+    }, 500);
+    cleanups.push(() => clearInterval(timer));
+  });
+  disposeWorkCarousels = () => cleanups.forEach(cleanup => cleanup());
+}
+
 function renderWorks() {
+  disposeWorkCarousels();
   const openIds = new Set([...document.querySelectorAll('.work[open]')].map(x => x.dataset.id));
   workObserver.disconnect();
   let year = '';
@@ -31,17 +75,18 @@ function renderWorks() {
     const title = esc(pick(p.title));
     const tags = p.tags.map(tag => `<span class="tag">${esc(tag)}</span>`).join('');
     const recognition = p.recognition ? `<p class="award-label">${esc(pick(p.recognition))}</p>` : '';
-    const photo = p.image ? `<a class="work-image" href="${esc(p.imageLink || p.image)}" target="_blank" rel="noopener noreferrer" aria-label="${p.imageLink ? tr('projectLink') : tr('viewImage')}"><img src="${esc(p.image)}" alt="${title}" loading="lazy"></a>` : '';
+    const photo = workPhoto(p, title);
     const link = p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener noreferrer" class="text-link">${tr('projectLink')}</a>` : '';
     return `${heading}
       <details class="work" id="project-${p.id}" data-id="${p.id}" ${openIds.has(p.id) ? 'open' : ''}>
         <summary><h3>${title}</h3><div class="tags">${tags}</div></summary>
-        <div class="work-body${p.image ? ' has-image' : ''}">
+        <div class="work-body${p.image || p.images ? ' has-image' : ''}">
           <div><p><strong>${esc(pick(p.org))}</strong></p>${recognition}<p>${esc(pick(p.body))}</p>${link}</div>
           ${photo}
         </div>
       </details>`;
   }).join('');
+  initWorkCarousels();
   document.querySelectorAll('.work:not([open]) > summary').forEach(summary => workObserver.observe(summary));
 }
 
