@@ -48,13 +48,16 @@
 @media(max-width:680px){#work-list .work-body.has-image{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){#work-list .work[open] .work-body{animation:none}}
 
-/* Internship photos share a calm, consistently sized sliding frame. */
-.work-carousel{min-width:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--soft)}
-.work-carousel-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+/* Square internship photo carousel with overlaid side chevrons. */
+.work-carousel{position:relative;min-width:0;aspect-ratio:1;border-radius:14px;overflow:hidden;background:var(--soft)}
+.work-carousel-track{display:flex;width:100%;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
 .work-carousel-track::-webkit-scrollbar{display:none}
-.work-carousel-slide{display:flex;flex:0 0 100%;min-width:0;aspect-ratio:4/3;align-items:center;justify-content:center;scroll-snap-align:start;scroll-snap-stop:always}
-.work-carousel-slide img{display:block;width:100%;height:100%;object-fit:contain}
-.work-carousel-controls{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;background:var(--paper);border-top:1px solid var(--line)}
-.work-carousel-controls button{width:42px;height:42px;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--teal);font-size:22px;line-height:1;transition:background .2s}
-.work-carousel-controls button:hover{background:var(--soft)}
-.work-carousel-count{font-size:13px;letter-spacing:2px;color:var(--muted);font-variant-numeric:tabular-nums}
+.work-carousel-slide{display:block;flex:0 0 100%;min-width:0;height:100%;scroll-snap-align:start;scroll-snap-stop:always}
+.work-carousel-slide img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.work-carousel-controls{position:absolute;inset:0;pointer-events:none}
+.work-carousel-controls button{position:absolute;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:44px;height:64px;padding:0;border:0;border-radius:6px;background:transparent;color:white;font-size:48px;font-weight:300;line-height:1;text-shadow:0 1px 6px rgba(0,0,0,.8);pointer-events:auto;transition:background .2s}
+.work-carousel-controls button[data-step="-1"]{left:5px}
+.work-carousel-controls button[data-step="1"]{right:5px}
+.work-carousel-controls button:hover{background:rgba(0,0,0,.16)}
+.work-carousel-controls button:focus-visible{outline-color:white;outline-offset:-4px;background:rgba(0,0,0,.24)}
+.work-carousel-count{display:none}

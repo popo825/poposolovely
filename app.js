@@ -25,7 +25,7 @@ function workPhoto(p, title) {
   const zh = lang === 'zh';
   return `<div class="work-carousel" role="region" aria-roledescription="${zh ? '照片輪播' : 'carousel'}" aria-label="${title}">
     <div class="work-carousel-track" tabindex="0" aria-label="${zh ? '使用左右方向鍵切換照片' : 'Use left and right arrow keys to switch photos'}">${p.images.map((photo, i) => `<a class="work-carousel-slide" href="${esc(photo.src)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(pick(photo.alt))} (${i + 1}/${p.images.length})"><img src="${esc(photo.src)}" alt="${esc(pick(photo.alt))}" loading="lazy"></a>`).join('')}</div>
-    <div class="work-carousel-controls"><button type="button" data-step="-1" aria-label="${zh ? '上一張照片' : 'Previous photo'}">←</button><span class="work-carousel-count">1 / ${p.images.length}</span><button type="button" data-step="1" aria-label="${zh ? '下一張照片' : 'Next photo'}">→</button></div>
+    <div class="work-carousel-controls"><button type="button" data-step="-1" aria-label="${zh ? '上一張照片' : 'Previous photo'}"><span aria-hidden="true">‹</span></button><span class="work-carousel-count">1 / ${p.images.length}</span><button type="button" data-step="1" aria-label="${zh ? '下一張照片' : 'Next photo'}"><span aria-hidden="true">›</span></button></div>
   </div>`;
 }
 
@@ -35,12 +35,12 @@ function initWorkCarousels() {
     const track = carousel.querySelector('.work-carousel-track');
     const count = carousel.querySelector('.work-carousel-count');
     const total = track.children.length;
-    let nextAt = Date.now() + 5000;
+    let nextAt = Date.now() + 3000;
     const index = () => Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
     const move = step => {
       const next = (index() + step + total) % total;
       track.scrollTo({left: next * track.clientWidth, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
-      nextAt = Date.now() + 5000;
+      nextAt = Date.now() + 3000;
     };
     carousel.querySelectorAll('[data-step]').forEach(button => button.addEventListener('click', () => move(Number(button.dataset.step))));
     track.addEventListener('scroll', () => { count.textContent = `${index() + 1} / ${total}`; }, {passive:true});
@@ -48,11 +48,11 @@ function initWorkCarousels() {
       if (!['ArrowLeft','ArrowRight'].includes(event.key)) return;
       event.preventDefault(); move(event.key === 'ArrowRight' ? 1 : -1);
     });
-    track.addEventListener('pointerdown', () => { nextAt = Date.now() + 8000; });
+    track.addEventListener('pointerdown', () => { nextAt = Date.now() + 3000; });
     const timer = setInterval(() => {
       const bounds = carousel.getBoundingClientRect();
       if (document.hidden || !carousel.closest('details').open || !carousel.getClientRects().length || bounds.bottom <= 0 || bounds.top >= innerHeight || carousel.matches(':hover') || carousel.contains(document.activeElement) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        nextAt = Date.now() + 5000; return;
+        nextAt = Date.now() + 3000; return;
       }
       if (Date.now() >= nextAt) move(1);
     }, 500);
